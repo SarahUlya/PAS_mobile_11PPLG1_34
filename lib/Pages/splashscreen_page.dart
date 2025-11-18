@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pas_mobile_11pplg1_34/Controllers/login_controller.dart';
+import 'package:pas_mobile_11pplg1_34/Controllers/splashscreen_controller.dart';
 
-class SplashscreenPage extends StatelessWidget {
-  SplashscreenPage({super.key});
+class SplashScreen extends StatelessWidget {
+  SplashScreen({super.key});
 
-  final auth = Get.find<LoginApiController>();
+  final splashC = Get.put(SplashscreenController());
 
   @override
   Widget build(BuildContext context) {
-    Future.microtask(() => auth.checkLoginStatus());
-
     return Scaffold(
       backgroundColor: Colors.blue,
       body: Center(
@@ -18,7 +16,7 @@ class SplashscreenPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.pets,
+              Icons.store_mall_directory,
               size: 80,
               color: Colors.white,
             ),

@@ -13,15 +13,14 @@ class ProfilePage1 extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          // ---------------- HEADER ----------------
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(top: 80, bottom: 40),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 80, 146, 201),
-                  Color.fromARGB(255, 120, 180, 220),
+                  Color(0xFF5092C9),
+                  Color(0xFF78B4DC),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -30,10 +29,9 @@ class ProfilePage1 extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // AVATAR
                 Container(
                   padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                   ),
@@ -46,10 +44,11 @@ class ProfilePage1 extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // USERNAME
                 Obx(
                   () => Text(
-                    auth.username.value,
+                    auth.username.value.isEmpty
+                        ? "Loading..."
+                        : auth.username.value,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 26,
@@ -63,27 +62,18 @@ class ProfilePage1 extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          // -------------- CARD INFO --------------
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Card(
               elevation: 4,
-              shadowColor: Colors.black26,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 30,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.person_outline,
-                      size: 40,
-                      color: Colors.blue.shade700,
-                    ),
+                    Icon(Icons.person_outline, size: 40, color: Colors.blue.shade700),
                     const SizedBox(width: 20),
                     Expanded(
                       child: Obx(
@@ -105,20 +95,17 @@ class ProfilePage1 extends StatelessWidget {
 
           const Spacer(),
 
-          // -------------- LOGOUT BUTTON --------------
-          Obx(
-            () => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 90),
-              child: CustomButton(
-                text: 'Logout',
-                isLoading: false,
-                color: Colors.red,
-                onPressed: () => auth.logout(),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 90),
+            child: CustomButton(
+              text: 'Logout',
+              isLoading: false,
+              color: Colors.red,
+              onPressed: () => auth.logout(),
             ),
           ),
 
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
         ],
       ),
     );

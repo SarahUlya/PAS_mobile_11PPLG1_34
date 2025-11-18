@@ -8,10 +8,6 @@ class RegisterUser extends StatelessWidget {
   RegisterUser({super.key});
   final controller = Get.find<RegisterController>();
 
-    final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-    final TextEditingController fullnameController = TextEditingController();
-  final TextEditingController emailController= TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,17 +26,16 @@ class RegisterUser extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomTextField(
-                    controller: usernameController,
+                    controller: controller.userController,
                     label: "Username",
-                    obscure: true,
-                    icon: Icons.lock,
+                    icon: Icons.person,
                   ),
                 ),
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomTextField(
-                    controller: passwordController,
+                    controller: controller.passwordController,
                     label: "Password",
                     obscure: true,
                     icon: Icons.lock,
@@ -50,20 +45,20 @@ class RegisterUser extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomTextField(
-                    controller: fullnameController,
+                    controller: controller.fullnameController,
                     label: "Full Name",
                     obscure: true,
-                    icon: Icons.lock,
+                    icon: Icons.person,
                   ),
                 ),
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomTextField(
-                    controller: emailController,
+                    controller: controller.emailController,
                     label: "Email",
                     obscure: true,
-                    icon: Icons.lock,
+                    icon: Icons.email,
                   ),
                 ),
 

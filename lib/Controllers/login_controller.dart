@@ -4,10 +4,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:pas_mobile_11pplg1_34/API/login_api.dart';
 import 'package:pas_mobile_11pplg1_34/Models/login_model.dart';
-import 'package:pas_mobile_11pplg1_34/Pages/home_page.dart';
-import 'package:pas_mobile_11pplg1_34/sharedpref_register.dart';
+import 'package:pas_mobile_11pplg1_34/Routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class LoginApiController extends GetxController {
   final TextEditingController userController = TextEditingController();
@@ -18,32 +16,26 @@ class LoginApiController extends GetxController {
   var isLoading = false.obs;
   var loginModel = Rxn<TabelModel>();
 
+  @override
+  void onInit() {
+    super.onInit();
+    checkLoginStatus();
+  }
 
   Future<void> checkLoginStatus() async {
-  final prefs = await SharedPreferences.getInstance();
-  final savedUsername = prefs.getString("username");
+    final prefs = await SharedPreferences.getInstance();
+    final savedUsername = prefs.getString("username");
 
-  // Optional: sedikit delay untuk smooth splash
-  await Future.delayed(Duration(milliseconds: 200));
-
-  if (savedUsername != null) {
-    username.value = savedUsername;
-    isLoggedIn.value = true;
-    Get.offAllNamed('/home');
-  } else {
-    Get.offAllNamed('/login');
+    await Future.delayed(Duration(milliseconds: 200));
+    if (savedUsername != null) {
+      username.value = savedUsername;
+      isLoggedIn.value = true;
+    } else {
+      isLoggedIn.value = false;
+    }
   }
-}
 
   void LoginApi() async {
-    // final username = userController.text.trim();
-    // final password = passwordController.text.trim();
-
-    // if (username.isEmpty || password.isEmpty) {
-    //   Get.snackbar("Error", "Username dan password tidak boleh kosong");
-    //   return;
-    // }
-
     try {
       isLoading.value = true;
 
@@ -58,7 +50,6 @@ class LoginApiController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
         loginModel.value = TabelModel.fromJson(data);
 
         if (loginModel.value == null) {
@@ -69,15 +60,13 @@ class LoginApiController extends GetxController {
         final result = loginModel.value!;
 
         if (result.status) {
-          if (result.token == true) {
-            await SharedPrefHelper.saveToken(result.token);
-            print("Token disimpan: ${result.token}");
-          } else {
-            print("Token tidak ditemukan di response");
-          }
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString("username", userController.text);
+
+          username.value = userController.text;
 
           Get.snackbar("Success", result.message);
-          Get.off(() => HomePage());
+          Get.offAllNamed('/home');
         } else {
           Get.snackbar("Error", result.message);
         }
@@ -90,18 +79,19 @@ class LoginApiController extends GetxController {
     } catch (e) {
       Get.snackbar("Exception", e.toString());
     }
+
     isLoading.value = false;
   }
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-  await prefs.remove("username");
-  username.value = '';
-  isLoggedIn.value = false;
+    await prefs.remove("username");
+    username.value = '';
+    isLoggedIn.value = false;
 
-  // final favController = Get.find<FavoriteController>();
-  // favController.clearFavorites();
-  Get.offAllNamed('/login');
+    // final favController = Get.find<FavoriteController>();
+    // favController.clearFavorites();
+    Get.offAllNamed(AppRoutes.splashScreen);
   }
 
   @override

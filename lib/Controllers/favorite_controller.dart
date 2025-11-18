@@ -27,7 +27,6 @@ class FavoriteController extends GetxController {
   Future<void> addFavorite(TabelModel store, String username) async {
     await db.insertFavorite(store, username);
 
-    // Update CatController
     final storeControl = Get.find<StoreController>();
     final index = storeControl.store.indexWhere((c) => c.id == store.id);
     if (index != -1) {
@@ -37,10 +36,9 @@ class FavoriteController extends GetxController {
     favorites.add(store);
   }
 
-  Future<void> removeFavorite(String id, String username) async {
+  Future<void> removeFavorite(int id, String username) async {
     await db.deleteFavorite(id, username);
 
-    // Update CatController
     final storeControl = Get.find<StoreController>();
     final index = storeControl.store.indexWhere((c) => c.id == id);
     if (index != -1) {
@@ -50,12 +48,19 @@ class FavoriteController extends GetxController {
     favorites.removeWhere((f) => f.id == id);
   }
 
-  Future<bool> isFavorite(String id, String username) async {
+  Future<bool> isFavorite(int id, String username) async {
     return await db.isFavorite(id, username);
   }
 
+  Future<void> refreshFavorites() async {
+  final username = Get.find<LoginApiController>().username.value;
+  if (username.isNotEmpty) {
+    await loadFavorites(username);
+  }
+}
+
+
   void clearFavorites() {
-  // Reset isFavorite di semua CatController
   final storeControl = Get.find<StoreController>();
   for (var produk in storeControl.store) {
     produk.isFavorite.value = false;

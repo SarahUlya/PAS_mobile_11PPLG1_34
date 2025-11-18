@@ -16,48 +16,42 @@ class DbHelper {
   }
 
   Future<Database> _initDb() async {
-  final databasePath = await getDatabasesPath();
-  final path = join(databasePath, "store.db");
+    final databasePath = await getDatabasesPath();
+    final path = join(databasePath, "store.db");
 
-  // Jangan hapus database setiap init
-  // await deleteDatabase(path);
-
-  return await openDatabase(
-    path,
-    version: 1,
-    onCreate: (db, version) async {
-      await db.execute('''
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute('''
         CREATE TABLE favorites(
-          id TEXT PRIMARY KEY,
+          id INTEGER PRIMARY KEY,
           title TEXT,
-          price TEXT,
+          price INTEGER,
           description TEXT,
           category TEXT,
-          image TEXT
-        )
+          image TEXT,
+        username TEXT
+      )
       ''');
-    },
-  );
-}
-
-
-  Future<int> insertFavorite(TabelModel store, String username) async {
-    final dbClient = await db;
-    return await dbClient.insert(
-      'favorites',
-      {
-        'id': store.id,
-        'title': store.title,
-        'price': store.price,
-        'description': store.description,
-        'category': store.category,
-        'image': store.image,
       },
-      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<int> deleteFavorite(String id, String username) async {
+  Future<int> insertFavorite(TabelModel store, String username) async {
+    final dbClient = await db;
+    return await dbClient.insert('favorites', {
+      'id': store.id,
+      'title': store.title,
+      'price': store.price,
+      'description': store.description,
+      'category': categoryValues.reverse[store.category],
+      'image': store.image,
+      'username': username,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> deleteFavorite(int id, String username) async {
     final dbClient = await db;
     return await dbClient.delete(
       'favorites',
@@ -67,18 +61,17 @@ class DbHelper {
   }
 
   Future<List<TabelModel>> getFavoritesByUser(String username) async {
-  final dbClient = await db;
-  final res = await dbClient.query(
-    'favorites',
-    where: 'username = ?',
-    whereArgs: [username],
-  );
+    final dbClient = await db;
+    final res = await dbClient.query(
+      'favorites',
+      where: 'username = ?',
+      whereArgs: [username],
+    );
 
-  return res.map((e) => TabelModel.fromDb(e, username)).toList();
-}
+    return res.map((e) => TabelModel.fromDb(e, username)).toList();
+  }
 
-
-  Future<bool> isFavorite(String id, String username) async {
+  Future<bool> isFavorite(int id, String username) async {
     final dbClient = await db;
     final res = await dbClient.query(
       'favorites',
